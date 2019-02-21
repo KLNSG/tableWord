@@ -15,9 +15,7 @@ springboot + mybatis
 
 #### 使用说明
 
-1. xxxx
-2. xxxx
-3. xxxx
+觉得有用的大佬可以给个star，我再优化。
 
 #### 参与贡献
 
