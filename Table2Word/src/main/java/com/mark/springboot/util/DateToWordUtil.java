@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 /**
  * desc * 创建word文档 步骤: 1,建立文档 2,创建一个书写器 3,打开文档 4,向文档中写入数据 5,关闭文档
  *
- * @author Lixf
- * @since 2019/2/21 19:22
+ * @author ：Lxin
+ * @date ：Created in 2020/10/12 15:27
  **/
 @Service
 public class DateToWordUtil {
@@ -47,11 +47,19 @@ public class DateToWordUtil {
 
                 List<TableFileds> fileds = queryDao.getTable(tables.get(i).getName());
 
-                String all = "" + (i + 1) + " tableName:" + table_name + ":" + table_comment;//表头
+                String easy = Fanyi.easy(table_name.replaceAll("_", " "));
 
-                Table table = new Table(6);//6列
+                System.out.println("正在执行："+easy);
+
+                String all = "" + (i + 1) + "、" + easy + "表" + "（"+table_name+"）";//表头
+
+                Table table = new Table(5);//6列
 
                 document.add(new Paragraph(""));
+
+                int width[] = {30,20,10,10,30};//设置每列宽度比例
+                table.setWidths(width);
+                table.setWidth(90);
 
                 table.setBorderWidth(1);
 
@@ -64,41 +72,33 @@ public class DateToWordUtil {
                 /*
                  * 添加表头的元素，并设置表头背景的颜色
                  */
-                Color chade = new Color(176, 196, 222);
+                Color chade = new Color(255, 255, 255);
 
-                Cell cell = new Cell("num");// 单元格
-
-                cell.setBackgroundColor(chade);
-
-                cell.setHeader(true);
-
-                table.addCell(cell);
-
-                cell = new Cell("file");// 单元格
+                Cell cell = new Cell("列名");// 单元格
 
                 cell.setBackgroundColor(chade);
 
                 table.addCell(cell);
 
-                cell = new Cell("type");// 单元格
+                cell = new Cell("类型");// 单元格
 
                 cell.setBackgroundColor(chade);
 
                 table.addCell(cell);
 
-                cell = new Cell("isNull");// 单元格
+                cell = new Cell("主键");// 单元格
 
                 cell.setBackgroundColor(chade);
 
                 table.addCell(cell);
 
-                cell = new Cell("primary key");// 单元格
+                cell = new Cell("是否为空");// 单元格
 
                 cell.setBackgroundColor(chade);
 
                 table.addCell(cell);
 
-                cell = new Cell("desc");// 单元格
+                cell = new Cell("字段说明");// 单元格
 
                 cell.setBackgroundColor(chade);
 
@@ -107,26 +107,25 @@ public class DateToWordUtil {
                 table.endHeaders();// 表头结束
                 // 表格的主体
                 for (int k = 0; k < fileds.size(); k++) {
-                    String Field = fileds.get(k).getField();
+                    String Field = "  "+fileds.get(k).getField();
 
-                    String Type = fileds.get(k).getType();
+                    String Type = "  "+fileds.get(k).getType();
 
-                    String Null = fileds.get(k).getNull();
+                    String Key = fileds.get(k).getKey().equals("PRI")?"是":"否";
 
-                    String Key = fileds.get(k).getKey();
+                    String Null = fileds.get(k).getNull().equals("YES")?"是":"否";
 
                     String Comment = fileds.get(k).getComment();
-                    table.addCell((k + 1) + "");
 
                     table.addCell(Field);
 
                     table.addCell(Type);
 
-                    table.addCell(Null);
-
                     table.addCell(Key);
 
-                    table.addCell(Comment);
+                    table.addCell(Null);
+
+                    table.addCell(Fanyi.easy(Field.replaceAll("_"," ")));
                 }
                 Paragraph pheae = new Paragraph(all);
                 //写入表说明
